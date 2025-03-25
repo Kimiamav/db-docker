@@ -1,0 +1,45 @@
+sion: "3"
+services:
+  db:
+    container_name: mysql-80 #charger le conteneur name my sql
+    image: mysql:8.4
+    platform: linux/amd64
+    ports:
+      - "8036:3306" #le côte interne de docker a gauche le port d'écoute ouvert cote machine et a droit cote docker
+    restart: always
+    environment:
+      MYSQL_DATABASE: app_db
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    #      MYSQL_ROOT_PASSWORD: yoo
+      MYSQL_ROOT_PASSWORD: ort
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes: #on va persister la data lorsqu'on l'arretera elle sera supprimer
+      - ./dbdata:/var/lib/mysql
+  phpmyadmin:
+    container_name: pma-80
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 1G
+      MEMORY_LIMIT: 512M
+      MAX_EXECUTION_TIME: 0
+    restart: always
+    links:
+      - db
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - "8081:8080"
+#    environment:
+#      ADMINER_DEFAULT_SERVER: db
+#      ADMINER_DESIGN: "lucas-sandery"
+#    links:
+#      - db
+volumes:
+  dbdata:
